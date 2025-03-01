@@ -5,29 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard Client</title>
-<!--===============================================================================================-->	
-<link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'fonts/iconic/css/material-design-iconic-font.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'fonts/linearicons-v1.0.0/icon-font.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/animate/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/select2/select2.min.css' %}">
 </head>
 <body>
     <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{% static 'images/bg-01.jpg' %}');">
@@ -74,23 +57,23 @@
         </div>
     </div>
 
-    <!-- Modal pour les détails du produit -->
+    <!-- Modal1 -->
     <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
         <div class="overlay-modal1 js-hide-modal1"></div>
         <div class="container">
-            <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+            <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent    ">
                 <button class="how-pos3 hov3 trans-04 js-hide-modal1">
                     <img src="{% static 'images/icons/icon-close.png' %}" alt="CLOSE">
                 </button>
-                <div class="row">
+                <div class="row">   
                     <div class="col-md-6 col-lg-7 p-b-30">
                         <div class="p-l-25 p-r-30 p-lr-0-lg">
-                            <div class="wrap-slick3 flex-sb flex-w">
+                            <div class="wrap-slick3 flex-sb flex-w" id="product-images">
                                 <div class="wrap-slick3-dots"></div>
                                 <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-                                <div class="slick3 gallery-lb" id="product-images">
+                                <!-- <div class="slick3 gallery-lb" > -->
                                     <!-- Les images seront chargées dynamiquement -->
-                                </div>
+                                <!-- </div> -->
                             </div>
                         </div>
                     </div>
@@ -114,10 +97,10 @@
                                                     <i class="fs-16 zmdi zmdi-plus"></i>
                                                 </div>
                                             </div>
-                                            <button type="submit" name="payment_method" value="card" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                            <button type="submit" name="payment_method" value="card" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
                                                 Carte bancaire
                                             </button>
-                                            <button type="submit" name="payment_method" value="cash" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-10">
+                                            <button type="submit" name="payment_method" value="cash" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail m-t-23">
                                                 En espèces
                                             </button>
                                         </div>
@@ -132,108 +115,159 @@
     </div>
 
     <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
-    
-<!--===============================================================================================-->	
-	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
-        <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
-        <script>
-            $(".js-select2").each(function(){
-                $(this).select2({
-                    minimumResultsForSearch: 20,
-                    dropdownParent: $(this).next('.dropDownSelect2')
-                });
-            })
-        </script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
-        <script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/slick/slick.min.js' %}"></script>
-        <script src="{% static 'js/slick-custom.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/parallax100/parallax100.js' %}"></script>
-        <script>
-            $('.parallax100').parallax100();
-        </script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/MagnificPopup/jquery.magnific-popup.min.js' %}"></script>
-        <script>
-            $('.gallery-lb').each(function() { // the containers for all your galleries
-                $(this).magnificPopup({
-                    delegate: 'a', // the selector for gallery item
-                    type: 'image',
-                    gallery: {
-                        enabled:true
-                    },
-                    mainClass: 'mfp-fade'
-                });
-            });
-        </script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/isotope/isotope.pkgd.min.js' %}"></script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/sweetalert/sweetalert.min.js' %}"></script>
-        <script>
-            $('.js-addwish-b2, .js-addwish-detail').on('click', function(e){
+    <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+		$(".js-select2").each(function(){
+			$(this).select2({
+				minimumResultsForSearch: 20,
+				dropdownParent: $(this).next('.dropDownSelect2')
+			});
+		})
+	</script>
+
+    <script>
+        $(document).ready(function() {
+            $('.js-show-modal1').on('click', function(e) {
                 e.preventDefault();
-            });
-    
-            $('.js-addwish-b2').each(function(){
-                var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-                $(this).on('click', function(){
-                    swal(nameProduct, "is added to wishlist !", "success");
-    
-                    $(this).addClass('js-addedwish-b2');
-                    $(this).off('click');
+                var productId = $(this).data('product-id');
+
+                $.get("{% url 'product_detail' 0 %}".replace('0', productId), function(data) {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        $('#product-name').text(data.name);
+                        $('#product-price').text(data.price + '€');
+                        $('#product-description').text(data.description);
+                        $('#product-id').val(productId);
+
+                        // Charger les images dans la modale
+                        // $('#product-images').empty();
+                        // if (data.image) {
+                        //     $('#product-images').append(
+                        //         '<div class="wrap-slick3-dots"></div>'+
+                        //         '<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>'+
+                        //         '<div class="slick3 gallery-lb">' +
+                        //         '<div class="item-slick3" data-thumb="' + data.image + '">' +
+                        //         '<div class="wrap-pic-w pos-relative">' +
+                        //         '<img src="' + data.image + '" alt="IMG-PRODUCT">' +
+                        //         '<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="' + data.image + '">' +
+                        //         '<i class="fa fa-expand"></i></a></div></div></div>'
+                        //     );
+                        // }
+                        data.extra_images.forEach(function(img) {
+                            $('#product-images').append(
+                                // '<div class="wrap-slick3-dots"></div>'+
+                                // '<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>'+
+                                '<div class="slick3 gallery-lb">' +
+                                '<div class="item-slick3" data-thumb="' + img + '">' +
+                                '<div class="wrap-pic-w pos-relative">' +
+                                '<img src="' + img + '" alt="IMG-PRODUCT">' +
+                                '<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="' + img + '">' +
+                                '<i class="fa fa-expand"></i></a></div></div></div>'
+                            );
+                        });
+
+                        $('.js-modal1').addClass('show-modal1');
+                    }
                 });
             });
-    
-            $('.js-addwish-detail').each(function(){
-                var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
-    
-                $(this).on('click', function(){
-                    swal(nameProduct, "is added to wishlist !", "success");
-    
-                    $(this).addClass('js-addedwish-detail');
-                    $(this).off('click');
-                });
+
+            $('.js-hide-modal1').on('click', function() {
+                $('.js-modal1').removeClass('show-modal1');
             });
-    
-            /*---------------------------------------------*/
-    
-            $('.js-addcart-detail').each(function(){
-                var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-                $(this).on('click', function(){
-                    swal(nameProduct, "is added to cart !", "success");
-                });
-            });
-        
-        </script>
-    <!--===============================================================================================-->
-        <script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
-        <script>
-            $('.js-pscroll').each(function(){
-                $(this).css('position','relative');
-                $(this).css('overflow','hidden');
-                var ps = new PerfectScrollbar(this, {
-                    wheelSpeed: 1,
-                    scrollingThreshold: 1000,
-                    wheelPropagation: false,
-                });
-    
-                $(window).on('resize', function(){
-                    ps.update();
-                })
-            });
-        </script>
-    <!--===============================================================================================-->
-        <script src="{% static 'js/main.js' %}"></script>
-    
+        });
+    </script>
+
+
+
+<!--===============================================================================================-->
+<script src="{% static 'vendor/daterangepicker/moment.min.js' %} "></script>
+<script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/slick/slick.min.js' %}"></script>
+<script src="{% static 'js/slick-custom.js' %}"></script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/parallax100/parallax100.js' %}"></script>
+<script>
+    $('.parallax100').parallax100();
+</script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/MagnificPopup/jquery.magnific-popup.min.js' %}"></script>
+<script>
+    $('.gallery-lb').each(function() { // the containers for all your galleries
+        $(this).magnificPopup({
+            delegate: 'a', // the selector for gallery item
+            type: 'image',
+            gallery: {
+                enabled:true
+            },
+            mainClass: 'mfp-fade'
+        });
+    });
+</script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/isotope/isotope.pkgd.min.js' %}"></script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/sweetalert/sweetalert.min.js' %}"></script>
+<script>
+    $('.js-addwish-b2, .js-addwish-detail').on('click', function(e){
+        e.preventDefault();
+    });
+
+    $('.js-addwish-b2').each(function(){
+        var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+        $(this).on('click', function(){
+            swal(nameProduct, "is added to wishlist !", "success");
+
+            $(this).addClass('js-addedwish-b2');
+            $(this).off('click');
+        });
+    });
+
+    $('.js-addwish-detail').each(function(){
+        var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+
+        $(this).on('click', function(){
+            swal(nameProduct, "is added to wishlist !", "success");
+
+            $(this).addClass('js-addedwish-detail');
+            $(this).off('click');
+        });
+    });
+
+    /*---------------------------------------------*/
+
+    $('.js-addcart-detail').each(function(){
+        var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
+        $(this).on('click', function(){
+            swal(nameProduct, "is added to cart !", "success");
+        });
+    });
+
+</script>
+<!--===============================================================================================-->
+<script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+<script>
+    $('.js-pscroll').each(function(){
+        $(this).css('position','relative');
+        $(this).css('overflow','hidden');
+        var ps = new PerfectScrollbar(this, {
+            wheelSpeed: 1,
+            scrollingThreshold: 1000,
+            wheelPropagation: false,
+        });
+
+        $(window).on('resize', function(){
+            ps.update();
+        })
+    });
+</script>
+<!--===============================================================================================-->
+<script src="{% static 'js/main.js' %}"></script>
+
 </body>
 </html>
