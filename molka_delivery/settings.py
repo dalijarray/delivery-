@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'payment'
 ]
 
 MIDDLEWARE = [
@@ -128,8 +129,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # Pour la production, utilisé par colle
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51QxodHRvLWxhn7H8PKxohm8Ra3FVzD5SXlkN88NAWtenzhP2WMgYGS6rbY8wWAEBJ8JjzPYeUZ4oWUP6OywsqvM900adP9WmMV'
+STRIPE_SECRET_KEY = 'sk_test_51QxodHRvLWxhn7H8NEb3c5gFO0iAg0bQWYaFNVRgHndeDbgzcTFXJyF4G8UhN3LrrMc2HiMbdxqSWNum1Mq4A8rK00ZQ9l9ya1'
+STRIPE_WEBHOOK_SECRET = 'whsec_5acc2d45e27dfbafe09cf46ef09c08fcf3da08c2ac8669b61d06542271696bb4'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
