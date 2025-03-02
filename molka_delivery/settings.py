@@ -39,14 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'payments',
-<<<<<<< HEAD
-=======
-    'django_crontab',
-]
-
-CRONJOBS = [
-    ('*/30 * * * *', 'accounts.cron.update_livreur_locations'),  # Run every 30 seconds (adjust as needed)
->>>>>>> 6bbc3de9f5694ee3f21db9dded1667cf4dbf3aab
 ]
 
 MIDDLEWARE = [
