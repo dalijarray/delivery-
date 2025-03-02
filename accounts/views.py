@@ -5,9 +5,6 @@ from .models import CustomUser, Order, Product, ProductImage
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from .models import DeliveryLocation
 from django.views.decorators.csrf import csrf_exempt
