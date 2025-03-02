@@ -34,13 +34,14 @@ class Order(models.Model):
         ('cash', 'Paiement en espèces'),
         ('card', 'Carte bancaire'),
     )
-    client = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'client'})
+    client = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'client'}, related_name='orders')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
     location = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='pending')
+    livreur = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'role': 'livreur'}, related_name='delivery_orders')
 
     def total_price(self):
         return self.quantity * self.product.price
