@@ -39,7 +39,7 @@ def signup(request):
         # Connexion automatique après inscription
         login(request, user)
         if user.role == 'admin':
-            return redirect('admin_dashboard')
+            return redirect('admin_add_product')
         elif user.role == 'livreur':
             return redirect('livreur_dashboard')
         else:
@@ -57,7 +57,7 @@ def user_login(request):
             login(request, user)
             # Redirection en fonction du rôle
             if user.role == 'admin':
-                return redirect('admin_dashboard')
+                return redirect('admin_add_product')
             elif user.role == 'livreur':
                 return redirect('livreur_dashboard')
             else:
