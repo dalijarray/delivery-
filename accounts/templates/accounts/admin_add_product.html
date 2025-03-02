@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajouter un produit</title>
+    <link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/linearicons-v1.0.0/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-v4">
+        <div class="container-menu-desktop">
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
+                    <a href="#" class="logo">
+                        <img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO">
+                    </a>
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li><a href="{% url 'admin_add_product' %}">Home</a></li>
+                            <li><a href="{% url 'admin_add_product' %}">Ajouter produit</a></li>
+                            <li><a href="{% url 'admin_orders' %}">Liste des commandes</a></li>
+                            <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg0 p-t-104 p-b-116">
+        <div class="container">
+            <h4 class="mtext-105 cl2 txt-center p-b-30">Ajouter un produit</h4>
+            {% if error %}
+                <p class="text-danger txt-center p-b-20">{{ error }}</p>
+            {% endif %}
+            {% if success %}
+                <p class="text-success txt-center p-b-20">{{ success }}</p>
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="bor8 m-b-20 how-pos4-parent">
+                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="name" placeholder="Nom du produit" required>
+                </div>
+                <div class="bor8 m-b-20 how-pos4-parent">
+                    <textarea class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" name="description" placeholder="Description" rows="4" required></textarea>
+                </div>
+                <div class="bor8 m-b-20 how-pos4-parent">
+                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" step="0.01" name="price" placeholder="Prix (€)" required>
+                </div>
+                <div class="bor8 m-b-20 how-pos4-parent">
+                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" name="stock" placeholder="Stock" required>
+                </div>
+                <div class="bor8 m-b-20">
+                    <label class="stext-111 cl2">Image principale :</label>
+                    <input class="stext-111 cl2 size-116" type="file" name="image" accept="image/*">
+                </div>
+                <div class="bor8 m-b-20">
+                    <label class="stext-111 cl2">Images supplémentaires :</label>
+                    <input class="stext-111 cl2 size-116" type="file" name="extra_images" accept="image/*" multiple>
+                </div>
+                <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+                    Ajouter le produit
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

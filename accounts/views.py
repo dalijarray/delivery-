@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import SignupForm
 from .models import CustomUser, Order, Product, ProductImage
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
@@ -47,6 +47,7 @@ def signup(request):
     
     # Si méthode GET, afficher le formulaire vide
     return render(request, 'accounts/signup.html')
+# login
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -67,7 +68,14 @@ def user_login(request):
     # Si méthode GET, afficher le formulaire vide
     return render(request, 'accounts/login.html')
 
-def admin_dashboard(request):
+# logout
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+# admin_dashboard
+# admin_add_product
+def admin_add_product(request):
     if request.user.role != 'admin':
         return redirect('login')
 
@@ -76,44 +84,54 @@ def admin_dashboard(request):
         description = request.POST.get('description')
         price = request.POST.get('price')
         stock = request.POST.get('stock')
-        image = request.FILES.get('image')  # Image principale
-        extra_images = request.FILES.getlist('extra_images')  # Images supplémentaires
+        image = request.FILES.get('image')
+        extra_images = request.FILES.getlist('extra_images')
 
-        # Validation
         if not all([name, description, price, stock]):
-            return render(request, 'accounts/admin_dashboard.html', {
-                'error': 'Tous les champs sont requis.'
-            })
+            return render(request, 'accounts/admin_add_product.html', {'error': 'Tous les champs sont requis.'})
 
         try:
-            product = Product(
-                name=name,
-                description=description,
-                price=price,
-                stock=stock,
-                image=image
-            )
+            product = Product(name=name, description=description, price=price, stock=stock, image=image)
             product.save()
-
-            # Ajout des images supplémentaires
             for img in extra_images:
                 ProductImage.objects.create(product=product, image=img)
-
-            return render(request, 'accounts/admin_dashboard.html', {
-                'success': 'Produit ajouté avec succès !'
-            })
+            return render(request, 'accounts/admin_add_product.html', {'success': 'Produit ajouté avec succès !'})
         except Exception as e:
-            return render(request, 'accounts/admin_dashboard.html', {
-                'error': f'Erreur lors de l’ajout : {str(e)}'
-            })
+            return render(request, 'accounts/admin_add_product.html', {'error': f'Erreur : {str(e)}'})
 
-    return render(request, 'accounts/admin_dashboard.html')
+    return render(request, 'accounts/admin_add_product.html')
 
+# admin_orders
+def admin_orders(request):
+    if request.user.role != 'admin':
+        return redirect('login')
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        livreur_id = request.POST.get('livreur_id')
+        try:
+            order = Order.objects.get(id=order_id)
+            livreur = CustomUser.objects.get(id=livreur_id, role='livreur')
+            order.livreur = livreur
+            order.status = 'assigned'
+            order.save()
+            return render(request, 'accounts/admin_orders.html', {'success': f'Livreur affecté à la commande {order.id} !'})
+        except Order.DoesNotExist:
+            return render(request, 'accounts/admin_orders.html', {'error': 'Commande non trouvée.'})
+        except CustomUser.DoesNotExist:
+            return render(request, 'accounts/admin_orders.html', {'error': 'Livreur non trouvé.'})
+
+    orders = Order.objects.all()
+    livreurs = CustomUser.objects.filter(role='livreur')
+    return render(request, 'accounts/admin_orders.html', {'orders': orders, 'livreurs': livreurs})
+
+#livreur_dashboard
 def livreur_dashboard(request):
     if request.user.role != 'livreur':
         return redirect('login')
     return render(request, 'accounts/livreur_dashboard.html')
 
+# client_dashboard
 def client_dashboard(request):
     if request.user.role != 'client':
         return redirect('login')

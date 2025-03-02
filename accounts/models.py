@@ -79,6 +79,7 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    livreur = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'role': 'livreur'}, related_name='delivery_orders')
 
     def save(self, *args, **kwargs):
         # Automatically compute total_price before saving if not set
