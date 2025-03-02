@@ -232,34 +232,56 @@ def orders(request):
     orders = Order.objects.filter(client=request.user).order_by('-created_at')
     return render(request, 'accounts/orders.html', {'orders': orders})
 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now
+from django.db.models import Q
+import random
+
 @login_required
 @csrf_exempt
 def update_delivery_location(request, order_id):
     if request.method == 'POST':
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
+
         if not (latitude and longitude):
             return JsonResponse({'error': 'Latitude and longitude are required.'}, status=400)
 
         try:
-            order = Order.objects.get(id=order_id, client=request.user)
-            location = DeliveryLocation.objects.create(
-                livreur=request.user,  # Assuming the authenticated user is the livreur
+            order = Order.objects.get(id=order_id)
+            if request.user.role != 'livreur' or order.livreur != request.user:
+                return JsonResponse({'error': 'Unauthorized access to this order.'}, status=403)
+            
+            # Fetch last known location
+            latest_location = DeliveryLocation.objects.filter(order=order).order_by('-timestamp').first()
+
+            # If there is a last location, generate a nearby location
+            if latest_location:
+                latitude, longitude = generate_nearby_location(float(latest_location.latitude), float(latest_location.longitude))
+            else:
+                latitude, longitude = float(latitude), float(longitude)  # First recorded location
+
+            # Save new location
+            DeliveryLocation.objects.create(
+                livreur=order.livreur,
                 order=order,
                 latitude=latitude,
-                longitude=longitude
+                longitude=longitude,
+                timestamp=now()
             )
-            return JsonResponse({
-                'status': 'success',
-                'latitude': latitude,
-                'longitude': longitude
-            })
+
+            return JsonResponse({'status': 'success', 'latitude': latitude, 'longitude': longitude})
+
         except Order.DoesNotExist:
-            return JsonResponse({'error': 'Order not found or unauthorized.'}, status=404)
+            return JsonResponse({'error': 'Order not found.'}, status=404)
+
     elif request.method == 'GET':
         try:
-            order = Order.objects.get(id=order_id, client=request.user)
+            order = Order.objects.get(id=order_id)
             latest_location = DeliveryLocation.objects.filter(order=order).order_by('-timestamp').first()
+
             if latest_location:
                 return JsonResponse({
                     'status': 'success',
@@ -267,13 +289,34 @@ def update_delivery_location(request, order_id):
                     'longitude': latest_location.longitude
                 })
             return JsonResponse({'error': 'No location data available.'}, status=404)
+
         except Order.DoesNotExist:
             return JsonResponse({'error': 'Order not found or unauthorized.'}, status=404)
+
     return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+
+def generate_nearby_location(lat, lon):
+    """
+    Generate a random nearby location within ~500m to ~2km from the current location.
+    """
+    lat_offset = random.uniform(-0.01, 0.01)  # ~1km variation
+    lon_offset = random.uniform(-0.01, 0.01)  # ~1km variation
+
+    return round(lat + lat_offset, 6), round(lon + lon_offset, 6)
+
 
 @login_required
 def track_delivery(request, order_id):
-    if request.user.role != 'client':
+    order = get_object_or_404(Order, id=order_id)
+    if request.user.role == 'client' and order.client != request.user:
         return redirect('login')
-    order = get_object_or_404(Order, id=order_id, client=request.user)
-    return render(request, 'accounts/track_delivery.html', {'order': order})
+    elif request.user.role == 'livreur' and order.livreur != request.user:
+        return redirect('login')
+    
+    latest_location = DeliveryLocation.objects.filter(order=order).order_by('-timestamp').first()
+    return render(request, 'accounts/track_delivery.html', {
+        'order': order,
+        'latitude': latest_location.latitude if latest_location else None,
+        'longitude': latest_location.longitude if latest_location else None
+    })

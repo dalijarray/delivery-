@@ -90,5 +90,91 @@
 
     <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script>
+        function getCSRFToken() {
+            return $('[name="csrfmiddlewaretoken"]').val();
+        }
+
+        // Function to get the current position using Geolocation API
+        function getCurrentPosition(orderId, callback) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude.toFixed(6);
+                        const longitude = position.coords.longitude.toFixed(6);
+                        callback(orderId, latitude, longitude);
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        // Fallback to random Tunisian coordinates if geolocation fails
+                        const coords = generateRandomTunisiaCoords();
+                        callback(orderId, coords.latitude, coords.longitude);
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+                const coords = generateRandomTunisiaCoords();
+                callback(orderId, coords.latitude, coords.longitude);
+            }
+        }
+
+        // Function to generate random latitude and longitude within Tunisia (fallback)
+        function generateRandomTunisiaCoords() {
+            const minLat = 30.20;  // Minimum latitude for Tunisia
+            const maxLat = 37.30;  // Maximum latitude for Tunisia
+            const minLon = 7.52;   // Minimum longitude for Tunisia
+            const maxLon = 11.58;  // Maximum longitude for Tunisia
+
+            const latitude = (Math.random() * (maxLat - minLat) + minLat).toFixed(6);
+            const longitude = (Math.random() * (maxLon - minLon) + minLon).toFixed(6);
+            return { latitude, longitude };
+        }
+
+        // Function to update location for each order automatically
+        function updateLocation(orderId, latitude, longitude) {
+            $.ajax({
+                url: `{% url "update_location" order_id=1 %}`.replace('1', orderId),
+                method: 'POST',
+                data: {
+                    latitude: latitude,
+                    longitude: longitude,
+                    csrfmiddlewaretoken: getCSRFToken()
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        console.log(`Location updated for order ${orderId}: ${latitude}, ${longitude}`);
+                    } else {
+                        console.error(`Error updating location for order ${orderId}: ${data.error}`);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(`Error updating location for order ${orderId}: ${error}`);
+                }
+            });
+        }
+
+        // Start automatic updates every 30 seconds (adjust as needed)
+        $(document).ready(function() {
+            // Get order IDs from the table
+            const orderIds = [];
+            $('form[method="post"]').each(function() {
+                const actionMatch = $(this).find('input[name="order_id"]').val();
+                if (actionMatch) {
+                    orderIds.push(actionMatch);
+                }
+            });
+
+            // Update locations for each order periodically
+            function updateAllLocations() {
+                orderIds.forEach(orderId => {
+                    getCurrentPosition(orderId, updateLocation);
+                });
+            }
+
+            updateAllLocations(); // Initial update
+            setInterval(updateAllLocations, 30000); // Update every 30 seconds
+        });
+    </script>
 </body>
 </html>
