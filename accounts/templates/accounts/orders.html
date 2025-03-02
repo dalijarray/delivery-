@@ -238,7 +238,12 @@
                                                 Credit Card
                                             {% endif %}
                                         </td>
-                                        <td class="column-6">{{ order.status|title }}</td>
+                                        <td class="column-6">
+                                            {{ order.status|title }}
+                                            <a href="{% url 'track_delivery' order_id=order.id %}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                                Track Delivery
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             {% else %}

@@ -1,0 +1,72 @@
+{% load static %}
+{% csrf_token %} <!-- Add this near the top of the body or in a form -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Track Delivery</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="ltext-105 cl0 txt-center">Track Your Delivery</h2>
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script>
+        // Get CSRF token for Django AJAX requests
+        function getCSRFToken() {
+            return $('[name="csrfmiddlewaretoken"]').val();
+        }
+
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13); // Default center (London), adjust as needed
+
+        // Add OSM tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to update livreur position with POST request
+        function updateLivreurPosition() {
+            $.ajax({
+                url: '{% url "update_location" order_id=order.id %}',
+                method: 'POST',  // Changed from GET to POST
+                data: {
+                    latitude: 48.8566,  // Example latitude (Paris, France)
+                    longitude: 2.3522,  // Example longitude (Paris, France)
+                    csrfmiddlewaretoken: getCSRFToken()  // Include CSRF token
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        // Assuming the backend returns the latest location in the response
+                        // For now, use hardcoded data or fetch from your backend
+                        var latitude = 48.8566;  // Replace with actual data from response if available
+                        var longitude = 2.3522;  // Replace with actual data from response if available
+                        var livreurMarker = L.marker([latitude, longitude]).addTo(map);
+                        map.setView([latitude, longitude], 13);  // Center map on livreur
+                    } else {
+                        console.error('Error updating location:', data.error);
+                    }
+                },
+                error: function(error) {
+                    console.error('Error fetching location:', error);
+                }
+            });
+        }
+
+        // Update position every 5 seconds
+        setInterval(updateLivreurPosition, 5000);
+        updateLivreurPosition(); // Initial call
+    </script>
+</body>
+</html>

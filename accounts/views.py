@@ -1,10 +1,16 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .forms import SignupForm
 from .models import CustomUser, Order, Product, ProductImage
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
+from .models import DeliveryLocation
+from django.views.decorators.csrf import csrf_exempt
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -181,3 +187,49 @@ def orders(request):
 
     orders = Order.objects.filter(client=request.user).order_by('-created_at')
     return render(request, 'accounts/orders.html', {'orders': orders})
+
+@login_required
+@csrf_exempt
+def update_delivery_location(request, order_id):
+    if request.method == 'POST':
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        if not (latitude and longitude):
+            return JsonResponse({'error': 'Latitude and longitude are required.'}, status=400)
+
+        try:
+            order = Order.objects.get(id=order_id, client=request.user)
+            location = DeliveryLocation.objects.create(
+                livreur=request.user,  # Assuming the authenticated user is the livreur
+                order=order,
+                latitude=latitude,
+                longitude=longitude
+            )
+            return JsonResponse({
+                'status': 'success',
+                'latitude': latitude,
+                'longitude': longitude
+            })
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Order not found or unauthorized.'}, status=404)
+    elif request.method == 'GET':
+        try:
+            order = Order.objects.get(id=order_id, client=request.user)
+            latest_location = DeliveryLocation.objects.filter(order=order).order_by('-timestamp').first()
+            if latest_location:
+                return JsonResponse({
+                    'status': 'success',
+                    'latitude': latest_location.latitude,
+                    'longitude': latest_location.longitude
+                })
+            return JsonResponse({'error': 'No location data available.'}, status=404)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Order not found or unauthorized.'}, status=404)
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+@login_required
+def track_delivery(request, order_id):
+    if request.user.role != 'client':
+        return redirect('login')
+    order = get_object_or_404(Order, id=order_id, client=request.user)
+    return render(request, 'accounts/track_delivery.html', {'order': order})

@@ -92,3 +92,12 @@ class Order(models.Model):
     class Meta:
         ordering = ['-created_at']  # Orders by most recent first
     
+class DeliveryLocation(models.Model):
+    livreur = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'livreur'})
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='locations')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Location for {self.livreur.username} - Order {self.order.id}"
