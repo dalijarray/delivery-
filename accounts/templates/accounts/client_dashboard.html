@@ -13,8 +13,14 @@
     <link rel="stylesheet" href="{% static 'vendor/select2/select2.min.css' %}">
 </head>
 <body>
+    
     <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{% static 'images/bg-01.jpg' %}');">
         <h2 class="ltext-105 cl0 txt-center">Liste des produits</h2>
+        <div class="p-t-20">
+            <a href="{% url 'orders' %}" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                View My Orders
+            </a>
+        </div>
     </section>
 
     <div class="bg0 m-t-23 p-b-140">
@@ -82,7 +88,7 @@
                             <h4 class="mtext-105 cl2 js-name-detail p-b-14" id="product-name"></h4>
                             <span class="mtext-106 cl2" id="product-price"></span>
                             <p class="stext-102 cl3 p-t-23" id="product-description"></p>
-                            <form method="post" id="order-form">
+                            <form method="post" id="order-form" action="{% url 'client_dashboard' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="product_id" id="product-id">
                                 <div class="p-t-33">

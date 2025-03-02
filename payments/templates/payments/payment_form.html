@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment</title>
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/animate/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/select2/select2.min.css' %}">
+    <style>
+        /* Add custom styles to center the form */
+        .centered-content {
+            min-height: calc(100vh - 184px); /* Subtract header height (approximate height of bg-img1) */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5; /* Match bg0 color if defined in main.css */
+        }
+        .block2 {
+            max-width: 500px; /* Limit width for better readability */
+            width: 100%;
+        }
+        .container{
+            margin-left: 35%;
+        }
+    </style>
+</head>
+<body>
+    <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{% static 'images/bg-01.jpg' %}');">
+        <h2 class="ltext-105 cl0 txt-center">Payment</h2>
+    </section>
+
+    <div class="centered-content">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="txt-center p-b-20">
+                        <p class="text-{{ message.tags }}">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="block2 txt-center">
+                <div class="block2-txt flex-w flex-t p-t-14">
+                    <div class="block2-txt-child1 flex-col-l">
+                        <h4 class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                            Payment for {{ product.name }}
+                        </h4>
+                        <span class="stext-105 cl3">
+                            Total: {{ product.price }}€
+                        </span>
+                    </div>
+                </div>
+                <form method="post" class="p-t-33">
+                    {% csrf_token %}
+                    <div class="form-group m-b-20">
+                        <label class="stext-102 cl3" for="card_number">Card Number</label>
+                        <input type="text" class="form-control mtext-104 cl3 txt-center" name="card_number" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="16" required>
+                    </div>
+                    <div class="form-row m-b-20">
+                        <div class="col">
+                            <label class="stext-102 cl3" for="card_expiry">Expiry Date (MM/YY)</label>
+                            <input type="text" class="form-control mtext-104 cl3 txt-center" name="card_expiry" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="col">
+                            <label class="stext-102 cl3" for="card_cvc">CVC</label>
+                            <input type="text" class="form-control mtext-104 cl3 txt-center" name="card_cvc" placeholder="123" maxlength="4" required>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-20">
+                        <label class="stext-102 cl3" for="quantity">Quantity (Available: {{ product.stock }})</label>
+                        <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                            <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                <i class="fs-16 zmdi zmdi-minus"></i>
+                            </div>
+                            <input class="mtext-104 cl3 txt-center num-product" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" required>
+                            <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                <i class="fs-16 zmdi zmdi-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                        Pay Now
+                    </button>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

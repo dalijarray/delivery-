@@ -4,7 +4,7 @@ from .forms import SignupForm
 from .models import CustomUser, Order, Product, ProductImage
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
-
+from django.contrib.auth.decorators import login_required
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -116,9 +116,9 @@ def client_dashboard(request):
 
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
-        quantity = request.POST.get('quantity', 1)  # Par défaut 1 si non spécifié
+        quantity = request.POST.get('quantity', 1)
         payment_method = request.POST.get('payment_method')
-        location = request.POST.get('location', 'Localisation non précisée')  # À améliorer avec géolocalisation
+        location = request.POST.get('location', 'Localisation non précisée')
 
         try:
             product = Product.objects.get(id=product_id)
@@ -128,22 +128,27 @@ def client_dashboard(request):
                     'error': f"Stock insuffisant pour {product.name} (disponible : {product.stock})"
                 })
 
-            order = Order(
-                client=request.user,
-                product=product,
-                quantity=quantity,
-                payment_method=payment_method,
-                location=location
-            )
-            order.save()
+            if payment_method == 'card':
+                # Redirect to payment processing for card payments
+                return redirect('process_payment', product_id=product_id)
+            else:
+                # Handle cash payment
+                order = Order(
+                    client=request.user,
+                    product=product,
+                    quantity=quantity,
+                    payment_method=payment_method,
+                    location=location,
+                    total_price=product.price * int(quantity),
+                )
+                order.save()
 
-            product.stock -= int(quantity)
-            product.save()
+                product.stock -= int(quantity)
+                product.save()
 
-            return render(request, 'accounts/client_dashboard.html', {
-                'products': products,
-                'success': f"Commande de {product.name} passée avec succès !"
-            })
+                # Redirect to orders page
+                return redirect('orders')
+
         except Product.DoesNotExist:
             return render(request, 'accounts/client_dashboard.html', {
                 'products': products,
@@ -151,7 +156,6 @@ def client_dashboard(request):
             })
 
     return render(request, 'accounts/client_dashboard.html', {'products': products})
-
 # Vue AJAX pour les détails du produit
 def product_detail(request, product_id):
     try:
@@ -168,3 +172,12 @@ def product_detail(request, product_id):
         return JsonResponse(data)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Produit non trouvé'}, status=404)
+    
+
+@login_required
+def orders(request):
+    if request.user.role != 'client':
+        return redirect('login')
+
+    orders = Order.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'accounts/orders.html', {'orders': orders})

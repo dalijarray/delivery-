@@ -1,0 +1,421 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Orders</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/linearicons-v1.0.0/icon-font.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <!-- Custom CSS for cleaner, narrower table -->
+    <style>
+        .wrap-table-shopping-cart {
+            width: 100%;
+            max-width: 900px; /* Reduced width for a cleaner look */
+            margin: 0 auto; /* Center the table horizontally */
+        }
+
+        .table-shopping-cart {
+            width: 100%;
+            border-collapse: collapse; /* Ensure borders merge for a clean look */
+        }
+
+        .table-shopping-cart th,
+        .table-shopping-cart td {
+            border: 1px solid #ccc; /* Lighter gray borders instead of black */
+            padding: 10px; /* Reduced padding for a tighter fit */
+            text-align: center; /* Center text as in your image */
+            font-size: 14px; /* Maintain readable font size */
+        }
+
+        .table-shopping-cart th {
+            background-color: #f5f5f5; /* Light gray background for headers */
+            font-weight: bold; /* Bold headers */
+        }
+
+        .table-shopping-cart img {
+            max-width: 80px; /* Smaller images to match your screenshot */
+            height: auto;
+            margin-bottom: 5px; /* Space between image and product name */
+        }
+
+        .table_row {
+            background-color: #fff; /* White background for rows */
+        }
+
+        /* Ensure the table stays centered and responsive */
+        @media (max-width: 768px) {
+            .wrap-table-shopping-cart {
+                max-width: 100%; /* Full width on smaller screens */
+            }
+
+            .table-shopping-cart th,
+            .table-shopping-cart td {
+                padding: 8px; /* Slightly reduce padding on mobile */
+                font-size: 12px; /* Smaller font on mobile */
+            }
+
+            .table-shopping-cart img {
+                max-width: 60px; /* Even smaller images on mobile */
+            }
+        }
+    </style>
+    <!--===============================================================================================-->
+</head>
+<body class="animsition">
+    
+    <!-- Header -->
+    <header class="header-v4">
+        <!-- Header desktop -->
+        <div class="container-menu-desktop">
+            <!-- Topbar -->
+            <div class="top-bar">
+                <div class="content-topbar flex-sb-m h-full container">
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
+                    </div>
+
+                    <div class="right-top-bar flex-w h-full">
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            Help & FAQs
+                        </a>
+                        <a href="{% url 'client_dashboard' %}" class="flex-c-m trans-04 p-lr-25">
+                            My Account
+                        </a>
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            EN
+                        </a>
+                        <a href="#" class="flex-c-m trans-04 p-lr-25">
+                            USD
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
+                    <!-- Logo desktop -->
+                    <a href="{% url 'client_dashboard' %}" class="logo">
+                        <img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO">
+                    </a>
+
+                    <!-- Menu desktop -->
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li>
+                                <a href="{% url 'client_dashboard' %}">Home</a>
+                            </li>
+                            <li class="active-menu">
+                                <a href="{% url 'orders' %}">Orders</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Header Mobile -->
+        <div class="wrap-header-mobile">
+            <!-- Logo mobile -->
+            <div class="logo-mobile">
+                <a href="{% url 'client_dashboard' %}"><img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO"></a>
+            </div>
+
+            <!-- Button show menu -->
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div class="menu-mobile">
+            <ul class="topbar-mobile">
+                <li>
+                    <div class="left-top-bar">
+                        Free shipping for standard order over $100
+                    </div>
+                </li>
+                <li>
+                    <div class="right-top-bar flex-w h-full">
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            Help & FAQs
+                        </a>
+                        <a href="{% url 'client_dashboard' %}" class="flex-c-m p-lr-10 trans-04">
+                            My Account
+                        </a>
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            EN
+                        </a>
+                        <a href="#" class="flex-c-m p-lr-10 trans-04">
+                            USD
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="main-menu-m">
+                <li>
+                    <a href="{% url 'client_dashboard' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'orders' %}">Orders</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- breadcrumb -->
+    <div class="container">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="{% url 'client_dashboard' %}" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+            <span class="stext-109 cl4">
+                My Orders
+            </span>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="bg0 p-t-75 p-b-85">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="wrap-table-shopping-cart">
+                        <table class="table-shopping-cart">
+                            <tr class="table_head">
+                                <th class="column-1">Product</th>
+                                <th class="column-2">Price</th>
+                                <th class="column-3">Quantity</th>
+                                <th class="column-4">Total</th>
+                                <th class="column-5">Payment Method</th>
+                                <th class="column-6">Status</th>
+                            </tr>
+                            {% if orders %}
+                                {% for order in orders %}
+                                    <tr class="table_row">
+                                        <td class="column-1">
+                                            <div class="how-itemcart1">
+                                                {% if order.product.image %}
+                                                    <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}">
+                                                {% else %}
+                                                    <img src="{% static 'images/item-cart-04.jpg' %}" alt="IMG">
+                                                {% endif %}
+                                            </div>
+                                            {{ order.product.name }}
+                                        </td>
+                                        <td class="column-2">{{ order.product.price }}€</td>
+                                        <td class="column-3">{{ order.quantity }}</td>
+                                        <td class="column-4">{{ order.total_price }}€</td>
+                                        <td class="column-5">
+                                            {% if order.payment_method == 'cash' %}
+                                                Cash on Delivery
+                                            {% else %}
+                                                Credit Card
+                                            {% endif %}
+                                        </td>
+                                        <td class="column-6">{{ order.status|title }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center p-t-20">No orders found.</td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg3 p-t-75 p-b-32">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-lg-3 p-b-50">
+                    <h4 class="stext-301 cl0 p-b-30">
+                        Categories
+                    </h4>
+                    <ul>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Women
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Men
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Shoes
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Watches
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-lg-3 p-b-50">
+                    <h4 class="stext-301 cl0 p-b-30">
+                        Help
+                    </h4>
+                    <ul>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Track Order
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Returns
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                Shipping
+                            </a>
+                        </li>
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                FAQs
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-lg-3 p-b-50">
+                    <h4 class="stext-301 cl0 p-b-30">
+                        GET IN TOUCH
+                    </h4>
+                    <p class="stext-107 cl7 size-201">
+                        Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+                    </p>
+                    <div class="p-t-27">
+                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+                            <i class="fa fa-pinterest-p"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3 p-b-50">
+                    <h4 class="stext-301 cl0 p-b-30">
+                        Newsletter
+                    </h4>
+                    <form>
+                        <div class="wrap-input1 w-full p-b-4">
+                            <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+                            <div class="focus-input1 trans-04"></div>
+                        </div>
+                        <div class="p-t-18">
+                            <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                                Subscribe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="p-t-40">
+                <div class="flex-c-m flex-w p-b-18">
+                    <a href="#" class="m-all-1">
+                        <img src="{% static 'images/icons/icon-pay-01.png' %}" alt="ICON-PAY">
+                    </a>
+                    <a href="#" class="m-all-1">
+                        <img src="{% static 'images/icons/icon-pay-02.png' %}" alt="ICON-PAY">
+                    </a>
+                    <a href="#" class="m-all-1">
+                        <img src="{% static 'images/icons/icon-pay-03.png' %}" alt="ICON-PAY">
+                    </a>
+                    <a href="#" class="m-all-1">
+                        <img src="{% static 'images/icons/icon-pay-04.png' %}" alt="ICON-PAY">
+                    </a>
+                    <a href="#" class="m-all-1">
+                        <img src="{% static 'images/icons/icon-pay-05.png' %}" alt="ICON-PAY">
+                    </a>
+                </div>
+                <p class="stext-107 cl6 txt-center">
+                    Copyright ©<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> & distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top" id="myBtn">
+        <span class="symbol-btn-back-to-top">
+            <i class="zmdi zmdi-chevron-up"></i>
+        </span>
+    </div>
+
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script>
+        $(".js-select2").each(function(){
+            $(this).select2({
+                minimumResultsForSearch: 20,
+                dropdownParent: $(this).next('.dropDownSelect2')
+            });
+        })
+    </script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/MagnificPopup/jquery.magnific-popup.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script>
+        $('.js-pscroll').each(function(){
+            $(this).css('position','relative');
+            $(this).css('overflow','hidden');
+            var ps = new PerfectScrollbar(this, {
+                wheelSpeed: 1,
+                scrollingThreshold: 1000,
+                wheelPropagation: false,
+            });
+
+            $(window).on('resize', function(){
+                ps.update();
+            })
+        });
+    </script>
+    <!--===============================================================================================-->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
