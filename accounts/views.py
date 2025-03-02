@@ -1,16 +1,13 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import SignupForm
 from .models import CustomUser, Order, Product, ProductImage
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from .models import DeliveryLocation
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -126,10 +123,39 @@ def admin_orders(request):
     return render(request, 'accounts/admin_orders.html', {'orders': orders, 'livreurs': livreurs})
 
 #livreur_dashboard
+@login_required
 def livreur_dashboard(request):
     if request.user.role != 'livreur':
         return redirect('login')
-    return render(request, 'accounts/livreur_dashboard.html')
+
+    # Get orders assigned to this livreur
+    orders = Order.objects.filter(livreur=request.user).order_by('-created_at')
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        action = request.POST.get('action')  # 'process', 'deliver', or 'cancel'
+        
+        try:
+            order = Order.objects.get(id=order_id, livreur=request.user)
+            current_status = order.status
+
+            if action == 'process' and current_status == 'assigned':
+                order.status = 'processing'
+                messages.success(request, f"Commande {order_id} marquée comme 'En cours de livraison'.")
+            elif action == 'deliver' and current_status == 'processing':
+                order.status = 'delivered'
+                messages.success(request, f"Commande {order_id} marquée comme 'Livré'.")
+            elif action == 'cancel' and current_status not in ['delivered']:
+                order.status = 'cancelled'
+                messages.success(request, f"Commande {order_id} annulée.")
+            else:
+                messages.error(request, "Action non autorisée ou statut invalide.")
+            
+            order.save()
+        except Order.DoesNotExist:
+            messages.error(request, "Commande non trouvée ou non autorisée.")
+
+    return render(request, 'accounts/livreur_dashboard.html', {'orders': orders})
 
 # client_dashboard
 def client_dashboard(request):
