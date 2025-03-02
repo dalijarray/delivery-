@@ -16,6 +16,55 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+    <style>
+        .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 21px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 12px;
+        margin: 5px 0;
+    }
+
+    .status-pending {
+        color: #e67e22;
+        text-shadow: 0 0 8px rgba(230, 126, 34, 0.4);
+        background-color: rgba(230, 126, 34, 0.1);
+    }
+
+    .status-processing {
+        color: #3498db;
+        text-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+        background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    .status-shipped {
+        color: #2ecc71;
+        text-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+        background-color: rgba(46, 204, 113, 0.1);
+    }
+
+    .status-delivered {
+        color: #27ae60;
+        text-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
+        background-color: rgba(39, 174, 96, 0.1);
+    }
+
+    .status-cancelled {
+        color: #e74c3c;
+        text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+        background-color: rgba(231, 76, 60, 0.1);
+    }
+
+    .status-refunded {
+        color: #9b59b6;
+        text-shadow: 0 0 8px rgba(155, 89, 182, 0.4);
+        background-color: rgba(155, 89, 182, 0.1);
+    }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -24,14 +73,14 @@
             <div class="wrap-menu-desktop how-shadow1">
                 <nav class="limiter-menu-desktop container">
                     <a href="#" class="logo">
-                        <img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO">
+                        <img src="{% static 'images/icons/logo.png' %}" alt="IMG-LOGO">
                     </a>
                     <div class="menu-desktop">
                         <ul class="main-menu">
-                            <li><a href="{% url 'admin_add_product' %}">Home</a></li>
+                            <li><a href="{% url 'admin_dashboard' %}">Home</a></li>
                             <li><a href="{% url 'admin_add_product' %}">Ajouter produit</a></li>
                             <li><a href="{% url 'admin_orders' %}">Liste des commandes</a></li>
-                            <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                            <li><a href="{% url 'logout' %}" style="margin-left: 300px;">Déconnexion</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -69,7 +118,11 @@
                             <td>{{ order.product.name }}</td>
                             <td>{{ order.quantity }}</td>
                             <td>{{ order.get_payment_method_display }}</td>
-                            <td>{{ order.status }}</td>
+                            <td>
+                                <span class="status-badge status-{{ order.status|lower }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
                             <td>{{ order.livreur.username|default:"Non affecté" }}</td>
                             <td>
                                 <button class="btn btn-primary js-assign-livreur" data-order-id="{{ order.id }}">Affecter</button>
@@ -83,26 +136,52 @@
             <div class="wrap-modal1 js-modal-assign p-t-60 p-b-20">
                 <div class="overlay-modal1 js-hide-modal-assign"></div>
                 <div class="container">
-                    <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
-                        <button class="how-pos3 hov3 trans-04 js-hide-modal-assign">
-                            <img src="{% static 'images/icons/icon-close.png' %}" alt="CLOSE">
-                        </button>
-                        <h4 class="mtext-105 cl2 txt-center p-b-30">Affecter un livreur</h4>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="order_id" id="assign-order-id">
-                            <div class="bor8 m-b-20">
-                                <select class="stext-111 cl2 plh3 size-116 p-l-30 p-r-30" name="livreur_id" required>
-                                    <option value="" disabled selected>Choisissez un livreur</option>
-                                    {% for livreur in livreurs %}
-                                        <option value="{{ livreur.id }}">{{ livreur.username }}</option>
-                                    {% endfor %}
-                                </select>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5 col-md-6 col-sm-8">
+                            <div class="bg0 p-4 p-md-5 rounded-lg shadow-lg position-relative">
+                                <!-- Close icon button (top-right corner) -->
+                                <button class="position-absolute top-0 end-0 m-3 bg-transparent border-0 js-hide-modal-assign">
+                                    <img src="{% static 'images/icons/icon-close.png' %}" alt="CLOSE" width="20">
+                                </button>
+                                
+                                <!-- Modal header -->
+                                <div class="text-center mb-4">
+                                    <h4 class="mtext-105 cl2 font-weight-bold">Affecter un livreur</h4>
+                                    <div class="mx-auto mt-2" style="width: 50px; height: 3px; background-color: #717fe0;"></div>
+                                </div>
+                                
+                                <!-- Assignment form -->
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" id="assign-order-id">
+                                    
+                                    <div class="form-group mb-4">
+                                        <label class="form-label fw-bold mb-2">Livreur</label>
+                                        <div class="position-relative">
+                                            <select class="form-select border rounded-lg py-3 pl-4 w-100" name="livreur_id" required style="border: 1px solid #e6e6e6; outline: none;">
+                                                <option value="" disabled selected>Choisissez un livreur</option>
+                                                {% for livreur in livreurs %}
+                                                    <option value="{{ livreur.id }}">{{ livreur.username }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <i class="fa fa-truck position-absolute" style="top: 50%; transform: translateY(-50%); left: 15px;"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4 d-flex justify-content-between">
+                                        <!-- Submit button -->
+                                        <button type="submit" class="flex-c-m stext-101 cl0 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer py-3" style="width: 48%;">
+                                            <i class="fa fa-check mr-2"></i> Affecter
+                                        </button>
+                                        
+                                        <!-- Close button -->
+                                        <button type="button" class="flex-c-m stext-101 cl0 bg1 bor1 hov-btn1 p-lr-15 trans-04 pointer py-3 js-hide-modal-assign" style="width: 48%;">
+                                            <i class="fa fa-times mr-2"></i> Annuler
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                                Affecter
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

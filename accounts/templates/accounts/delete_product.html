@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Supprimer un produit</title>
+    <link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/iconic/css/material-design-iconic-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/linearicons-v1.0.0/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    
+    <style>
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .form-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 4px;
+            width: 60px;
+            background-color: #717fe0;
+            border-radius: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .submit-btn {
+            padding: 15px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        
+        .notification {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .notification.success {
+            background-color: rgba(46, 204, 113, 0.15);
+            border-left: 4px solid #2ecc71;
+            color: #27ae60;
+        }
+        
+        .notification.error {
+            background-color: rgba(231, 76, 60, 0.15);
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-v4">
+        <div class="container-menu-desktop">
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
+                    <a href="{% url 'admin_dashboard' %}" class="logo">
+                        <img src="{% static 'images/icons/logo.png' %}" alt="IMG-LOGO">
+                    </a>
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                            <li><a href="{% url 'admin_add_product' %}">Ajouter produit</a></li>
+                            <li><a href="{% url 'admin_orders' %}">Liste des commandes</a></li>
+                            <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg0 p-t-104 p-b-116">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="form-section">
+                        <h4 class="form-title mtext-105">Confirmer la suppression</h4>
+                        <p class="text-center">Êtes-vous sûr de vouloir supprimer le produit "{{ product.name }}" ?</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="text-center mt-4">
+                                <button type="submit" class="submit-btn flex-c-m cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+                                    <i class="fa fa-trash mr-2"></i> Supprimer
+                                </button>
+                                <a href="{% url 'admin_dashboard' %}" class="submit-btn flex-c-m cl0 size-121 bg1 bor1 hov-btn1 p-lr-15 trans-04 mt-2">
+                                    <i class="fa fa-arrow-left mr-2"></i> Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

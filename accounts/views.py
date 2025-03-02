@@ -122,6 +122,7 @@ def admin_orders(request):
     livreurs = CustomUser.objects.filter(role='livreur')
     return render(request, 'accounts/admin_orders.html', {'orders': orders, 'livreurs': livreurs})
 
+
 #livreur_dashboard
 @login_required
 def livreur_dashboard(request):
@@ -206,6 +207,61 @@ def client_dashboard(request):
             })
 
     return render(request, 'accounts/client_dashboard.html', {'products': products})
+@login_required
+def admin_dashboard(request):
+    if request.user.role != 'admin':
+        return redirect('login')
+
+    # Fetch all clients and livreurs (exclude admins)
+    users = CustomUser.objects.filter(role__in=['client', 'livreur'])
+    products = Product.objects.all()
+    return render(request, 'accounts/admin_dashboard.html', {'users': users, 'products': products})
+
+@login_required
+def edit_product(request, product_id):
+    if request.user.role != 'admin':
+        return redirect('login')
+    
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        stock = request.POST.get('stock')
+        image = request.FILES.get('image')
+
+        if not all([name, description, price, stock]):
+            return render(request, 'accounts/edit_product.html', {'product': product, 'error': 'Tous les champs sont requis.'})
+
+        try:
+            product.name = name
+            product.description = description
+            product.price = price
+            product.stock = stock
+            if image:
+                product.image = image
+            product.save()
+            messages.success(request, f'Produit "{product.name}" mis à jour avec succès !')
+            return redirect('admin_dashboard')
+        except Exception as e:
+            return render(request, 'accounts/edit_product.html', {'product': product, 'error': f'Erreur : {str(e)}'})
+
+    return render(request, 'accounts/edit_product.html', {'product': product})
+
+@login_required
+def delete_product(request, product_id):
+    if request.user.role != 'admin':
+        return redirect('login')
+    
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        product_name = product.name
+        product.delete()
+        messages.success(request, f'Produit "{product_name}" supprimé avec succès !')
+        return redirect('admin_dashboard')
+    return render(request, 'accounts/delete_product.html', {'product': product})
+
+
 # Vue AJAX pour les détails du produit
 def product_detail(request, product_id):
     try:
@@ -222,7 +278,7 @@ def product_detail(request, product_id):
         return JsonResponse(data)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Produit non trouvé'}, status=404)
-    
+   
 
 @login_required
 def orders(request):

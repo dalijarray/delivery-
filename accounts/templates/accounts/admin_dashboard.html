@@ -11,127 +11,117 @@
     <link rel="stylesheet" href="{% static 'vendor/font-awesome-4.7.0/css/font-awesome.min.css' %}">
 </head>
 <body>
+    <header class="header-v4">
+        <div class="container-menu-desktop">
+            <div class="wrap-menu-desktop how-shadow1">
+                <nav class="limiter-menu-desktop container">
+                    <a href="#" class="logo">
+                        <img src="{% static 'images/icons/logo.png' %}" alt="IMG-LOGO">
+                    </a>
+                    <div class="menu-desktop">
+                        <ul class="main-menu">
+                            <li><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                            <li><a href="{% url 'admin_add_product' %}">Ajouter produit</a></li>
+                            <li><a href="{% url 'admin_orders' %}">Liste des commandes</a></li>
+                            <li><a href="{% url 'logout' %}" style="margin-left: 300px;">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
     <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{% static 'images/bg-01.jpg' %}');">
         <h2 class="ltext-105 cl0 txt-center">Dashboard Administrateur</h2>
     </section>
 
     <section class="bg0 p-t-104 p-b-116">
         <div class="container">
-            <!-- Ajout de produit (inchangé) -->
-            <h4 class="mtext-105 cl2 txt-center p-b-30">Ajouter un produit</h4>
-            {% if error %}
-                <p class="text-danger txt-center p-b-20">{{ error }}</p>
-            {% endif %}
-            {% if success %}
-                <p class="text-success txt-center p-b-20">{{ success }}</p>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="add_product" value="1">
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="name" placeholder="Nom du produit" required>
-                </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <textarea class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" name="description" placeholder="Description" rows="4" required></textarea>
-                </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" step="0.01" name="price" placeholder="Prix (€)" required>
-                </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" name="stock" placeholder="Stock" required>
-                </div>
-                <div class="bor8 m-b-20">
-                    <label class="stext-111 cl2">Image principale :</label>
-                    <input class="stext-111 cl2 size-116" type="file" name="image" accept="image/*">
-                </div>
-                <div class="bor8 m-b-20">
-                    <label class="stext-111 cl2">Images supplémentaires :</label>
-                    <input class="stext-111 cl2 size-116" type="file" name="extra_images" accept="image/*" multiple>
-                </div>
-                <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                    Ajouter le produit
-                </button>
-            </form>
-
-            <!-- Liste des commandes -->
-            <h4 class="mtext-105 cl2 txt-center p-b-30 m-t-50">Liste des commandes</h4>
+            <!-- Liste des utilisateurs -->
+            
+            <div class="p-b-10">
+                <h3 class="ltext-103 cl5">
+                    Liste des utilisateurs
+                </h3>
+            </div>
             <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Client</th>
-                        <th>Produit</th>
-                        <th>Quantité</th>
-                        <th>Paiement</th>
-                        <th>Statut</th>
-                        <th>Livreur</th>
-                        <th>Action</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    {% for order in orders %}
+                    {% for user in users %}
                         <tr>
-                            <td>{{ order.id }}</td>
-                            <td>{{ order.client.username }}</td>
-                            <td>{{ order.product.name }}</td>
-                            <td>{{ order.quantity }}</td>
-                            <td>{{ order.get_payment_method_display }}</td>
-                            <td>{{ order.status }}</td>
-                            <td>{{ order.livreur.username|default:"Non affecté" }}</td>
-                            <td>
-                                <button class="btn btn-primary js-assign-livreur" data-order-id="{{ order.id }}">Affecter</button>
-                            </td>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.get_role_display }}</td>
+                            
                         </tr>
                     {% endfor %}
+                    {% if not users %}
+                        <tr>
+                            <td colspan="5" class="text-center">Aucun utilisateur trouvé.</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
 
-            <!-- Modale pour affecter un livreur -->
-            <div class="wrap-modal1 js-modal-assign p-t-60 p-b-20">
-                <div class="overlay-modal1 js-hide-modal-assign"></div>
-                <div class="container">
-                    <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
-                        <button class="how-pos3 hov3 trans-04 js-hide-modal-assign">
-                            <img src="{% static 'images/icons/icon-close.png' %}" alt="CLOSE">
-                        </button>
-                        <h4 class="mtext-105 cl2 txt-center p-b-30">Affecter un livreur</h4>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="assign_livreur" value="1">
-                            <input type="hidden" name="order_id" id="assign-order-id">
-                            <div class="bor8 m-b-20">
-                                <select class="stext-111 cl2 plh3 size-116 p-l-30 p-r-30" name="livreur_id" required>
-                                    <option value="" disabled selected>Choisissez un livreur</option>
-                                    {% for livreur in livreurs %}
-                                        <option value="{{ livreur.id }}">{{ livreur.username }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                                Affecter
-                            </button>
-                        </form>
-                    </div>
-                </div>
+            <!-- Liste des produits -->
+            
+            <div class="p-b-10">
+                <h3 class="ltext-103 cl5">
+                    Liste des produits
+                </h3>
             </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Prix</th>
+                        <th>Stock</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.description|truncatechars:50 }}</td>
+                            <td>{{ product.price }}€</td>
+                            <td>{{ product.stock }}</td>
+                            <td>
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100px; max-height: 100px;">
+                                {% else %}
+                                    No image
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-info">Modifier</a>
+                                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-danger">Supprimer</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if not products %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun produit trouvé.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </section>
 
     <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.js-assign-livreur').on('click', function(e) {
-                e.preventDefault();
-                var orderId = $(this).data('order-id');
-                $('#assign-order-id').val(orderId);
-                $('.js-modal-assign').addClass('show-modal1');
-            });
-
-            $('.js-hide-modal-assign').on('click', function() {
-                $('.js-modal-assign').removeClass('show-modal1');
-            });
-        });
-    </script>
 </body>
 </html>

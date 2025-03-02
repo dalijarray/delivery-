@@ -16,6 +16,116 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    
+    <style>
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .form-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 4px;
+            width: 60px;
+            background-color: #717fe0;
+            border-radius: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .form-control {
+            border-radius: 5px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #717fe0;
+            box-shadow: 0 0 0 3px rgba(113, 127, 224, 0.2);
+        }
+        
+        .file-upload {
+            position: relative;
+            display: block;
+            padding: 15px;
+            border: 2px dashed #d1d1d1;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        
+        .file-upload:hover {
+            border-color: #717fe0;
+        }
+        
+        .file-upload input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        
+        .file-upload-icon {
+            display: block;
+            font-size: 24px;
+            color: #717fe0;
+            margin-bottom: 10px;
+        }
+        
+        .submit-btn {
+            padding: 15px 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        
+        .notification {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .notification.success {
+            background-color: rgba(46, 204, 113, 0.15);
+            border-left: 4px solid #2ecc71;
+            color: #27ae60;
+        }
+        
+        .notification.error {
+            background-color: rgba(231, 76, 60, 0.15);
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -24,14 +134,14 @@
             <div class="wrap-menu-desktop how-shadow1">
                 <nav class="limiter-menu-desktop container">
                     <a href="#" class="logo">
-                        <img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO">
+                        <img src="{% static 'images/icons/logo.png' %}" alt="IMG-LOGO">
                     </a>
                     <div class="menu-desktop">
                         <ul class="main-menu">
-                            <li><a href="{% url 'admin_add_product' %}">Home</a></li>
+                            <li><a href="{% url 'admin_dashboard' %}">Home</a></li>
                             <li><a href="{% url 'admin_add_product' %}">Ajouter produit</a></li>
                             <li><a href="{% url 'admin_orders' %}">Liste des commandes</a></li>
-                            <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                            <li><a href="{% url 'logout' %}" style="margin-left: 300px;">Déconnexion</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -41,44 +151,123 @@
 
     <section class="bg0 p-t-104 p-b-116">
         <div class="container">
-            <h4 class="mtext-105 cl2 txt-center p-b-30">Ajouter un produit</h4>
-            {% if error %}
-                <p class="text-danger txt-center p-b-20">{{ error }}</p>
-            {% endif %}
-            {% if success %}
-                <p class="text-success txt-center p-b-20">{{ success }}</p>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="name" placeholder="Nom du produit" required>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="form-section">
+                        <h4 class="form-title mtext-105">Ajouter un produit</h4>
+                        
+                        {% if error %}
+                            <div class="notification error">
+                                <i class="fa fa-exclamation-circle mr-2"></i> {{ error }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if success %}
+                            <div class="notification success">
+                                <i class="fa fa-check-circle mr-2"></i> {{ success }}
+                            </div>
+                        {% endif %}
+                        
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label class="form-label">Nom du produit</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                                    </div>
+                                    <input class="form-control" type="text" name="name" placeholder="Entrez le nom du produit" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-file-text-o"></i></span>
+                                    </div>
+                                    <textarea class="form-control" name="description" placeholder="Décrivez le produit en détail" rows="4" required></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Prix (€)</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-euro"></i></span>
+                                            </div>
+                                            <input class="form-control" type="number" step="0.01" name="price" placeholder="0.00" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Stock</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-cubes"></i></span>
+                                            </div>
+                                            <input class="form-control" type="number" name="stock" placeholder="Quantité disponible" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Image principale</label>
+                                <label class="file-upload">
+                                    <i class="fa fa-cloud-upload file-upload-icon"></i>
+                                    <span>Cliquez ou glissez-déposez l'image principale ici</span>
+                                    <input type="file" name="image" accept="image/*">
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Images supplémentaires</label>
+                                <label class="file-upload">
+                                    <i class="fa fa-picture-o file-upload-icon"></i>
+                                    <span>Sélectionnez plusieurs images (optionnel)</span>
+                                    <input type="file" name="extra_images" accept="image/*" multiple>
+                                </label>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="submit" class="submit-btn flex-c-m cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
+                                    <i class="fa fa-plus-circle mr-2"></i> Ajouter le produit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <textarea class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" name="description" placeholder="Description" rows="4" required></textarea>
-                </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" step="0.01" name="price" placeholder="Prix (€)" required>
-                </div>
-                <div class="bor8 m-b-20 how-pos4-parent">
-                    <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="number" name="stock" placeholder="Stock" required>
-                </div>
-                <div class="bor8 m-b-20">
-                    <label class="stext-111 cl2">Image principale :</label>
-                    <input class="stext-111 cl2 size-116" type="file" name="image" accept="image/*">
-                </div>
-                <div class="bor8 m-b-20">
-                    <label class="stext-111 cl2">Images supplémentaires :</label>
-                    <input class="stext-111 cl2 size-116" type="file" name="extra_images" accept="image/*" multiple>
-                </div>
-                <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer">
-                    Ajouter le produit
-                </button>
-            </form>
+            </div>
         </div>
     </section>
 
     <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    
+    <script>
+        // Display file name when selected
+        $(document).ready(function() {
+            $('input[type="file"]').change(function(e) {
+                var fileName = e.target.files[0].name;
+                var fileUpload = $(this).closest('.file-upload');
+                
+                if ($(this).prop('multiple')) {
+                    var filesCount = e.target.files.length;
+                    fileUpload.find('span').text(filesCount + ' fichiers sélectionnés');
+                } else {
+                    fileUpload.find('span').text(fileName);
+                }
+                
+                fileUpload.css('border-color', '#717fe0');
+            });
+        });
+    </script>
 </body>
 </html>

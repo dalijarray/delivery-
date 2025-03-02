@@ -16,6 +16,55 @@
     <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+    <style>
+        .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 12px;
+        margin: 5px 0;
+    }
+
+    .status-pending {
+        color: #e67e22;
+        text-shadow: 0 0 8px rgba(230, 126, 34, 0.4);
+        background-color: rgba(230, 126, 34, 0.1);
+    }
+
+    .status-processing {
+        color: #3498db;
+        text-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+        background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    .status-shipped {
+        color: #2ecc71;
+        text-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+        background-color: rgba(46, 204, 113, 0.1);
+    }
+
+    .status-delivered {
+        color: #27ae60;
+        text-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
+        background-color: rgba(39, 174, 96, 0.1);
+    }
+
+    .status-cancelled {
+        color: #e74c3c;
+        text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+        background-color: rgba(231, 76, 60, 0.1);
+    }
+
+    .status-refunded {
+        color: #9b59b6;
+        text-shadow: 0 0 8px rgba(155, 89, 182, 0.4);
+        background-color: rgba(155, 89, 182, 0.1);
+    }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -24,22 +73,26 @@
             <div class="wrap-menu-desktop how-shadow1">
                 <nav class="limiter-menu-desktop container">
                     <a href="{% url 'livreur_dashboard' %}" class="logo">
-                        <img src="{% static 'images/icons/logo-01.png' %}" alt="IMG-LOGO">
+                        <img src="{% static 'images/icons/logo.png' %}" alt="IMG-LOGO">
                     </a>
                     <div class="menu-desktop">
                         <ul class="main-menu">
                             <li><a href="{% url 'livreur_dashboard' %}">Accueil</a></li>
-                            <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                            <li><a style="margin-left: 900px;" href="{% url 'logout' %}">Déconnexion</a></li>
                         </ul>
                     </div>
                 </nav>
             </div>
         </div>
     </header>
-
+    <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('{% static 'images/cargo-delivery-vehicle.jpg' %}');">
+		<h2 class="ltext-105 cl0 txt-center">
+			Mes Commandes Affectées
+		</h2>
+	</section>
     <section class="bg0 p-t-104 p-b-116">
         <div class="container">
-            <h4 class="mtext-105 cl2 txt-center p-b-30">Mes Commandes Affectées</h4>
+            
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }} txt-center p-b-20">{{ message }}</div>
@@ -55,6 +108,7 @@
                         <th>Paiement</th>
                         <th>Statut</th>
                         <th>Action</th>
+                        <th>Location</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,22 +119,66 @@
                             <td>{{ order.product.name }}</td>
                             <td>{{ order.quantity }}</td>
                             <td>{{ order.get_payment_method_display }}</td>
-                            <td>{{ order.status }}</td>
                             <td>
-                                <form method="post" style="display: inline-block; margin-right: 5px;">
+                                <span class="status-badge status-{{ order.status|lower }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <form method="post" class="d-flex align-items-center gap-2">
                                     {% csrf_token %}
                                     <input type="hidden" name="order_id" value="{{ order.id }}">
                                     {% if order.status == 'assigned' %}
-                                        <button type="submit" name="action" value="process" class="btn btn-primary">En cours</button>
+                                        <button type="submit" name="action" value="process" class="btn rounded-pill px-3 py-2 shadow-sm" 
+                                                style="background-color: #3498db; color: white; border: none; transition: all 0.3s ease;">
+                                            <i class="fa fa-cogs mr-1"></i> En cours
+                                        </button>
                                     {% elif order.status == 'processing' %}
-                                        <button type="submit" name="action" value="deliver" class="btn btn-success">Livrer</button>
-                                        <button type="submit" name="action" value="cancel" class="btn btn-danger">Annuler</button>
+                                        <button type="submit" name="action" value="deliver" class="btn rounded-pill px-3 py-2 mx-2 shadow-sm" 
+                                                style="background-color: #2ecc71; color: white; border: none; transition: all 0.3s ease;">
+                                            <i class="fa fa-check-circle mr-1"></i> Livrer
+                                        </button>
+                                        <button type="submit" name="action" value="cancel" class="btn rounded-pill px-3 py-2 shadow-sm" 
+                                                style="background-color: #e74c3c; color: white; border: none; transition: all 0.3s ease;">
+                                            <i class="fa fa-times-circle mr-1"></i> Annuler
+                                        </button>
                                     {% elif order.status in 'pending,assigned,processing' %}
-                                        <button type="submit" name="action" value="cancel" class="btn btn-danger">Annuler</button>
+                                        <button type="submit" name="action" value="cancel" class="btn rounded-pill px-3 py-2 shadow-sm" 
+                                                style="background-color: #e74c3c; color: white; border: none; transition: all 0.3s ease;">
+                                            <i class="fa fa-times-circle mr-1"></i> Annuler
+                                        </button>
                                     {% endif %}
                                 </form>
-                                <a href="{% url 'track_delivery' order_id=order.id %}" class="btn btn-info mt-2">Suivre la livraison</a>
+                                
+                                <style>
+                                    /* Hover effects */
+                                    .btn[value="process"]:hover {
+                                        background-color: #2980b9 !important;
+                                        transform: translateY(-2px);
+                                        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3) !important;
+                                    }
+                                    
+                                    .btn[value="deliver"]:hover {
+                                        background-color: #27ae60 !important;
+                                        transform: translateY(-2px);
+                                        box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3) !important;
+                                    }
+                                    
+                                    .btn[value="cancel"]:hover {
+                                        background-color: #c0392b !important;
+                                        transform: translateY(-2px);
+                                        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3) !important;
+                                    }
+                                    
+                                    /* Active state */
+                                    .btn:active {
+                                        transform: translateY(0) !important;
+                                        box-shadow: none !important;
+                                    }
+                                </style>
+                                
                             </td>
+                            <td><a href="{% url 'track_delivery' order_id=order.id %}" class="btn btn-info ">Suivre la livraison</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
